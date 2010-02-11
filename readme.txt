@@ -14,12 +14,7 @@ the number of posts, authors and comments.
 This plugin queries the wordpress database three times to count the number
 of authors that have published at least one post, the number of published posts, and
 the number of approved comments sitewide. Options are available to customize the 
-title and appearance of the output. Here is a sample display:
-
-Site Stats
-141 contributors have published
-249 posts that generated
-129 comments 
+title and appearance of the output. 
 
 == Installation ==
 
@@ -33,9 +28,19 @@ Site Stats
 
 == Frequently Asked Questions ==
 
-Need help? Have a suggestion? 
-http://www.tacticaltechnique.com/wordpress/sidebar-stats-widget/
+= Need help? Have a suggestion? =
+[Visit this plugin's home page](http://www.tacticaltechnique.com/wordpress/sidebar-stats-widget/)
+
+== Screenshots ==
+
+1. Sample output using "Site Stats" as the title and bold tags on the numerical stats via the widget options.
 
 == Change Log ==
 
-0.100209 first build
+= 0.100209 =
+First build
+
+== Upgrade Notice ==
+
+= 0.100209 =
+First build
