@@ -1,20 +1,22 @@
-=== Sidebar Stats Widget ===
+=== Sidebar stats widget ===
 Contributors: salzano
 Donate link: http://www.tacticaltechnique.com/donate/
 Tags: wordpress stats, author count, total post count, total comment count, site stats
 Requires at least: 2.2
-Tested up to: 2.9.1
-Stable tag: 0.100209
+Tested up to: 3.0.2
+Stable tag: 0.101230
 
 Creates a sidebar widget that displays stats about your wordpress blog including
-the number of posts, authors and comments.
+the total number of posts, authors and comments.
 
 == Description ==
 
-This plugin queries the wordpress database three times to count the number
-of authors that have published at least one post, the number of published posts, and
+<p>Sample output:</p>
+<p>761 contributors have published<br>990 posts that generated<br>656 comments</p>
+<p>This plugin queries the wordpress database to count the number
+of authors that have published at least one post, the total number of published posts, and
 the number of approved comments sitewide. Options are available to customize the 
-title and appearance of the output. 
+title and appearance of the output.</p>
 
 == Installation ==
 
@@ -37,10 +39,19 @@ title and appearance of the output.
 
 == Change Log ==
 
+= 0.101230 =
+* Added element ID attributes
+* Condensed default options code
+* Added option to wrap widget output in &lt;li&gt; HTML tags
+* Removed options to prefix and suffix widget output
+
 = 0.100209 =
 First build
 
 == Upgrade Notice ==
+
+= 0.101230 =
+This release contains HTML element ID attributes that make the widget output more CSS friendly. The prefix and suffix options have been removed. They have been replaced with an option to wrap the widget output in list item HTML tags to place nice with themes.
 
 = 0.100209 =
 First build
