@@ -2,9 +2,9 @@
 Contributors: salzano
 Donate link: http://www.tacticaltechnique.com/donate/
 Tags: wordpress stats, author count, total post count, total comment count, site stats
-Requires at least: 2.2
-Tested up to: 3.0.2
-Stable tag: 0.101230
+Requires at least: 2.8
+Tested up to: 3.3.1
+Stable tag: 0.120218
 
 Creates a sidebar widget that displays stats about your wordpress blog including
 the total number of posts, authors and comments.
@@ -39,6 +39,10 @@ title and appearance of the output.</p>
 
 == Change Log ==
 
+= 0.120218 =
+* Implemented 2.8 Widgets API
+* Now uses $before_widget, $after_widget, $before_title, $after_title values from the theme
+
 = 0.101230 =
 * Added element ID attributes
 * Condensed default options code
@@ -49,6 +53,9 @@ title and appearance of the output.</p>
 First build
 
 == Upgrade Notice ==
+
+= 0.120218 =
+I upgraded this plugin's code to the use the 2.8 Widgets API. This means that this plugin now plays nicely with other plugins that may modify the behavior of your widgets. It also integrates with themes better by using $before_widget, $after_widget, $before_title and $after_title values.
 
 = 0.101230 =
 This release contains HTML element ID attributes that make the widget output more CSS friendly. The prefix and suffix options have been removed. They have been replaced with an option to wrap the widget output in list item HTML tags to place nice with themes.

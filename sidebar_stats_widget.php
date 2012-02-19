@@ -4,96 +4,69 @@ Plugin Name: Sidebar stats widget
 Plugin URI: http://www.tacticaltechnique.com/wordpress/sidebar-stats-widget/
 Description: Creates a sidebar widget that displays stats about your wordpress blog including the total number of posts, authors and comments.
 Author: Corey Salzano
-Version: 0.101230
+Version: 0.120218
 Author URI: http://www.twitter.com/salzano
 */
 
+class sidebar_stats_widget extends WP_Widget {
 
-
-function sidebar_stats_widget() {
-	$saved_options = array( );
-	$saved_options = get_option("widget_sidebar_stats");
-	if( !$saved_options ){
-		$default_options = get_sidebar_stats_widget_default_options;
-		update_option( "widget_sidebar_stats",$default_options );
-		$saved_options = $default_options;
-	}
-	$title = $saved_options['title'];
-	$beforeStat = $saved_options['beforeStat'];
-	$afterStat = $saved_options['afterStat'];
-	$wrapWithLiTF = $saved_options['wrapWithLiTF'];
-
-	global $wpdb;
-	// any user that has published a post, including the administrator
-	$authorCount = count( $wpdb->get_results("SELECT DISTINCT post_author, COUNT(ID) AS count FROM $wpdb->posts WHERE post_type = 'post' AND " . get_private_posts_cap_sql( 'post' ) . " GROUP BY post_author", ARRAY_A));
-	$postCount = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->posts WHERE post_status = 'publish' AND post_type = 'post'");
-	$commentCount = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->comments WHERE comment_approved = 1");
-
-	if($wrapWithLiTF){ echo "<li id=\"sidebar-stats-widget\">"; }
-	echo "<h4 id=\"ssw-title\">" . $title . "</h4>";
-	echo $beforeStat . $authorCount . $afterStat . " contributors have published<br>";
-	echo $beforeStat . $postCount . $afterStat . " posts that generated<br>";
-	echo $beforeStat . $commentCount . $afterStat . " comments";
-	if($wrapWithLiTF){ echo "</li>"; }
-}
-
-function get_sidebar_stats_widget_default_options( ){
-	$default_options = array(	'title' => 'Sidebar stats',
-								'beforeStat' => '<b>',
-								'afterStat' => '</b>',
-								'wrapWithLiTF' => false );
-	return $default_options;
-}
-
-function init_sidebar_stats(){
-	register_sidebar_widget("Sidebar stats widget", "sidebar_stats_widget");
-	register_widget_control("Sidebar stats widget", "sidebar_stats_control");
-}
-
-function sidebar_stats_control() {
-
-	$options = get_option("widget_sidebar_stats");
-
-	if( !$options ){
-		$default_options = get_sidebar_stats_widget_default_options;
-		update_option( "widget_sidebar_stats",$default_options );
+	function sidebar_stats_widget() {
+		// widget actual processes
+		parent::WP_Widget( /* Base ID */'sidebar_stats_widget', /* Name */'Sidebar stats widget', array( 'description' => 'Posts, comments and user counts' ) );
 	}
 
-	if ( $_POST['sidebar-stats-submit'] ) {
-		// get posted values from form submission
-		$new_options['title'] = strip_tags(stripslashes($_POST['sidebar-stats-title']));
-		$new_options['beforeStat'] = $_POST['sidebar-stats-beforeStat'];
-		$new_options['afterStat'] = $_POST['sidebar-stats-afterStat'];
-		if( $_POST['sidebar-stats-wrapWithLiTF']=="1"){
-			$new_options['wrapWithLiTF'] = true;
-		} else{
-			$new_options['wrapWithLiTF'] = false;
-		}
+	function form($instance) {
+		// outputs the options form on admin
 
-		// if the posted options are different, save them
-		if ( $options != $new_options ) {
-			$options = $new_options;
-			update_option('widget_sidebar_stats', $options);
-		}
-	}
+		// format title for html
+		$title = htmlspecialchars($instance['title'], ENT_QUOTES);
 
-	// format title for html
-	$title = htmlspecialchars($options['title'], ENT_QUOTES);
-
-	$beforeStat = $options['beforeStat'];
-	$afterStat = $options['afterStat'];
-	$wrapWithLiTF = $options['wrapWithLiTF'];
+		$beforeStat = $instance['beforeStat'];
+		$afterStat = $instance['afterStat'];
 ?>
-	<div>
-	<label for="sidebar-stats-title" style="line-height:35px;display:block;">Title: <input type="text" id="sidebar-stats-title" name="sidebar-stats-title" value="<?php echo $title; ?>" /></label>
-	<label for="sidebar-stats-beforeStat" style="line-height:35px;display:block;">Before each #: <input type="text" id="sidebar-stats-beforeStat" name="sidebar-stats-beforeStat" value="<?php echo $beforeStat; ?>" /></label>
-	<label for="sidebar-stats-afterStat" style="line-height:35px;display:block;">After each #: <input type="text" id="sidebar-stats-afterStat" name="sidebar-stats-afterStat" value="<?php echo $afterStat; ?>" /></label>
-	<label for="sidebar-stats-wrapWithLiTF" style="line-height:35px;display:block;"><input type="checkbox" id="sidebar-stats-wrapWithLiTF" value="1" name="sidebar-stats-wrapWithLiTF"<?php if($wrapWithLiTF){ echo " checked"; } ?> /> Wrap widget with &lt;li&gt; tags</label>
-	<input type="hidden" name="sidebar-stats-submit" id="sidebar-stats-submit" value="1" />
-	</div>
+	<p>
+	<label for="<?php echo $this->get_field_id('title'); ?>" style="line-height:35px;display:block;">Title: <input type="text" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php echo $title; ?>" /></label>
+	<label for="<?php echo $this->get_field_id('beforeStat'); ?>" style="line-height:35px;display:block;">Before each #: <input type="text" id="<?php echo $this->get_field_id('beforeStat'); ?>" name="<?php echo $this->get_field_name('beforeStat'); ?>" value="<?php echo $beforeStat; ?>" /></label>
+	<label for="<?php echo $this->get_field_id('afterStat'); ?>" style="line-height:35px;display:block;">After each #: <input type="text" id="<?php echo $this->get_field_id('afterStat'); ?>" name="<?php echo $this->get_field_name('afterStat'); ?>" value="<?php echo $afterStat; ?>" /></label>
+	</p>
 <?php
+	}
 
+	function update($new_instance, $old_instance) {
+		// processes widget options to be saved
+		$instance = $old_instance;
+		$instance['title'] = strip_tags(stripslashes( $new_instance['title'] ));
+		$instance['beforeStat'] = $new_instance['beforeStat'];
+		$instance['afterStat'] = $new_instance['afterStat'];
+		return $instance;
+	}
+
+	function widget($args, $instance) {
+		// outputs the content of the widget
+		extract($args, EXTR_SKIP);
+
+		$title = empty($instance['title']) ? '&nbsp;' : apply_filters('widget_title', $instance['title']);
+		$beforeStat = $instance['beforeStat'];
+		$afterStat = $instance['afterStat'];
+
+		global $wpdb;
+		$authorCount = count( $wpdb->get_results("SELECT DISTINCT post_author, COUNT(ID) AS count FROM $wpdb->posts WHERE post_type = 'post' AND " . get_private_posts_cap_sql( 'post' ) . " GROUP BY post_author", ARRAY_A));
+		$postCount = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->posts WHERE post_status = 'publish' AND post_type = 'post'");
+		$commentCount = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->comments WHERE comment_approved = 1");
+
+		echo $before_widget;
+		if ( !empty( $title ) ) { echo $before_title . $title . $after_title; };
+		echo $beforeStat . $authorCount . $afterStat . " contributors have published<br>";
+		echo $beforeStat . $postCount . $afterStat . " posts that generated<br>";
+		echo $beforeStat . $commentCount . $afterStat . " comments";
+		echo $after_widget;
+	}
 }
 
-add_action("plugins_loaded", "init_sidebar_stats");
+if( !function_exists('register_sidebar_stats_widget')){
+	add_action('widgets_init', 'register_sidebar_stats_widget');
+	function register_sidebar_stats_widget() {
+	    register_widget('sidebar_stats_widget');
+	}
+}
 ?>
